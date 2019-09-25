@@ -1,14 +1,17 @@
 import React from 'react'; 
 
 class Form extends React.Component {
-    constructor(props) {
+    
+  constructor(props) {
         super(props);
         this.state = {
             originalURL: '',
+            shortURL: ''
 
         };
       }
     
+
       handleChange = (event) => {
         this.setState({originalURL: event.target.value});
       }
@@ -24,6 +27,19 @@ class Form extends React.Component {
         }
       }  
 
+
+
+      copyURL = () => {
+        const textArea = document.createElement("textarea")
+        textArea.value = this.state.shortURL
+        document.body.appendChild(textArea)
+
+        textArea.select()
+        document.execCommand("Copy")
+
+        textArea.remove()
+      }
+
       handleSubmit = (event) => {
 
         const isValid = this.is_url(this.state.originalURL);
@@ -31,7 +47,7 @@ class Form extends React.Component {
         console.log(this.state.originalURL)
 
         const url = 'http://localhost:3000/urls/shorten';
-        const data = { originalURL: this.state.originalURL };
+        const data = { original_url: this.state.originalURL };
 
         fetch(url, {
           method: 'POST',
@@ -41,8 +57,9 @@ class Form extends React.Component {
           }
         })
         .then(response => response.json())
-        .then(response => console.log(response))
+        .then(response => this.setState({shortURL: response.short_url}))
         .catch(error => console.log(error))
+
         event.preventDefault();
       }
     
@@ -52,9 +69,18 @@ class Form extends React.Component {
             <div className="form-container">
               <form onSubmit={this.handleSubmit}>
                 <div className="form-group">
-                  <label>URL</label>
+                  <label>Original URL</label>
                   <input type="text" className="form-control" placeholder="Enter URL" onChange={this.handleChange}/>
                 </div>
+
+                <div className="form-group">
+                  <label>Shortened URL</label>
+                  <div className="short-url-div">
+                    <input type="text" className="form-control" defaultValue={this.state.shortURL} readOnly/>
+                    <button type="button" className="btn btn-primary btn-sm" onClick={this.copyURL}>Copy</button>
+                  </div>
+                </div>
+
                 <div className="form-button">
                   <button type="submit" value="Submit" className="btn btn-primary">Submit</button>
                 </div>

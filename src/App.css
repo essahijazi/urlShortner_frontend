@@ -31,10 +31,14 @@
 .form-container {
   padding: 20px;
   width: 350px;
-  height: 180px;
+  height: 250px;
   background-color: #09d3ac;
 }
 
 .form-button {
   text-align: center;
+}
+
+.short-url-div {
+  display: flex;
 }
