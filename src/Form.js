@@ -6,14 +6,19 @@ class Form extends React.Component {
         super(props);
         this.state = {
             originalURL: '',
-            shortURL: ''
+            shortURL: '',
+            disabled: true
 
         };
       }
     
 
       handleChange = (event) => {
-        this.setState({originalURL: event.target.value});
+        if (this.is_url(event.target.value)) {
+          this.setState({originalURL: event.target.value, disabled: false});
+        }else {
+          this.setState({disabled: true});
+        }
       }
     
 
@@ -41,10 +46,6 @@ class Form extends React.Component {
       }
 
       handleSubmit = (event) => {
-
-        const isValid = this.is_url(this.state.originalURL);
-        console.log(isValid);
-        console.log(this.state.originalURL)
 
         const url = 'http://localhost:3000/urls/shorten';
         const data = { original_url: this.state.originalURL };
@@ -77,12 +78,12 @@ class Form extends React.Component {
                   <label>Shortened URL</label>
                   <div className="short-url-div">
                     <input type="text" className="form-control" defaultValue={this.state.shortURL} readOnly/>
-                    <button type="button" className="btn btn-primary btn-sm" onClick={this.copyURL}>Copy</button>
+                    <button type="button" className="btn btn-primary btn-sm red" onClick={this.copyURL}>Copy</button>
                   </div>
                 </div>
 
                 <div className="form-button">
-                  <button type="submit" value="Submit" className="btn btn-primary">Submit</button>
+                  <button type="submit" value="Submit" className="red btn btn-primary" disabled={this.state.disabled}>Submit</button>
                 </div>
               </form>
             </div>

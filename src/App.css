@@ -29,10 +29,11 @@
 }
 
 .form-container {
+  border-radius: 15px;
   padding: 20px;
   width: 350px;
   height: 250px;
-  background-color: #09d3ac;
+  background-color: #CDCCCC;
 }
 
 .form-button {
@@ -41,4 +42,9 @@
 
 .short-url-div {
   display: flex;
+}
+
+.red {
+  background-color: #F55A1C !important;
+  border-color: #F55A1C !important
 }
