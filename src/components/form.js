@@ -7,75 +7,60 @@ class Form extends React.Component {
             originalURL: '',
 
         };
-    
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
       }
     
-      handleChange(event) {
+      handleChange = (event) => {
         this.setState({originalURL: event.target.value});
       }
     
-      handleSubmit(event) {
 
+
+      is_url(str) {
+        const regexp =  /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+        if (regexp.test(str)){
+          return true;
+        }else{
+          return false;
+        }
+      }  
+
+      handleSubmit = (event) => {
+
+        const isValid = this.is_url(this.state.originalURL);
+        console.log(isValid);
+        console.log(this.state.originalURL)
 
         const url = 'http://localhost:3000/urls/shorten';
-        const data = { originalURL: event.target.value };
-        
-        try {
-          const response = fetch(url, {
-            method: 'POST', // or 'PUT'
-            body: JSON.stringify(data), // data can be `string` or {object}!
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }).then(response => response.json())
-          const json = response.json();
-          console.log('Success:', JSON.stringify(json));
-        } catch (error) {
-          console.error('Error:', error);
-        }
+        const data = { originalURL: this.state.originalURL };
 
-
-        // const data = this.state.originalURL;
-        // console.log(data);
-
-
-        // try {
-        //     const response = fetch(`http://localhost:3000/urls/shorten`, {
-        //         method: 'POST',
-        //         body: JSON.stringify(data),
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     })
-        //     const json = response.json();
-        //     console.log('Success:', JSON.stringify(json));
-        //   } catch (error) {
-        //     console.error('Error:', error);
-        //   }
-        // // fetch(`http://localhost:3000/urls/shorten`,
-        // { 
-        //   method: 'POST',
-        //   body: JSON.stringify(data),
-        //   headers:{'Content-Type': 'application/json'}
-        // })
-        // .then(response => response.json())
-        // .then(jsonData => this.setState({originalURL: jsonData}))
-  
-        // alert('A name was submitted: ' + this.state.originalURL);
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(response => console.log(response))
+        .catch(error => console.log(error))
         event.preventDefault();
       }
     
       render() {
         return (
-          <form onSubmit={this.handleSubmit}>
-            <label>
-              URL:
-              <input type="text" value={this.state.originalURL} onChange={this.handleChange} />
-            </label>
-            <input type="submit" value="Submit" />
-          </form>
+          <div className="main-container"> 
+            <div className="form-container">
+              <form onSubmit={this.handleSubmit}>
+                <div className="form-group">
+                  <label>URL</label>
+                  <input type="text" className="form-control" placeholder="Enter URL" onChange={this.handleChange}/>
+                </div>
+                <div className="form-button">
+                  <button type="submit" value="Submit" className="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
         );
       }
 }
