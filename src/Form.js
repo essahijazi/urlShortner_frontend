@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React from 'react';
 
 class Form extends React.Component {
     
@@ -13,9 +13,13 @@ class Form extends React.Component {
       }
     
 
+      
       handleChange = (event) => {
-        if (this.is_url(event.target.value)) {
+        //url is valid, therefore submit button is enabled
+        if (this.isUrl(event.target.value)) {
           this.setState({originalURL: event.target.value, disabled: false});
+        
+        //url is NOT valid, therfore submit button is disabled
         }else {
           this.setState({disabled: true});
         }
@@ -23,33 +27,30 @@ class Form extends React.Component {
     
 
 
-      is_url(str) {
+      isUrl(str) {
+        //uses reg expression to check url validity
         const regexp =  /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
-        if (regexp.test(str)){
-          return true;
-        }else{
-          return false;
-        }
+        return regexp.test(str)
       }  
 
 
 
-      copyURL = () => {
-        const textArea = document.createElement("textarea")
-        textArea.value = this.state.shortURL
-        document.body.appendChild(textArea)
-
-        textArea.select()
-        document.execCommand("Copy")
-
-        textArea.remove()
+      copyURL() {
+        //copies url to clip board by selecting the content of text field
+        //then executing the 'copy' command
+        document.getElementById("short-url").select()
+        document.execCommand("Copy")        
       }
 
       handleSubmit = (event) => {
 
+        //prevents browser from refreshing the page
+        event.preventDefault();
+
         const url = 'http://localhost:3000/urls/shorten';
         const data = { original_url: this.state.originalURL };
 
+        //post the long url /urls/shorten and receice a shortened url
         fetch(url, {
           method: 'POST',
           body: JSON.stringify(data),
@@ -60,8 +61,6 @@ class Form extends React.Component {
         .then(response => response.json())
         .then(response => this.setState({shortURL: response.short_url}))
         .catch(error => console.log(error))
-
-        event.preventDefault();
       }
     
       render() {
@@ -69,6 +68,7 @@ class Form extends React.Component {
           <div className="main-container"> 
             <div className="form-container">
               <form onSubmit={this.handleSubmit}>
+
                 <div className="form-group">
                   <label>Original URL</label>
                   <input type="text" className="form-control" placeholder="Enter URL" onChange={this.handleChange}/>
@@ -77,7 +77,7 @@ class Form extends React.Component {
                 <div className="form-group">
                   <label>Shortened URL</label>
                   <div className="short-url-div">
-                    <input type="text" className="form-control" defaultValue={this.state.shortURL} readOnly/>
+                    <input id="short-url" type="text" className="form-control" defaultValue={this.state.shortURL} readOnly/>
                     <button type="button" className="btn btn-primary btn-sm red" onClick={this.copyURL}>Copy</button>
                   </div>
                 </div>
@@ -85,6 +85,7 @@ class Form extends React.Component {
                 <div className="form-button">
                   <button type="submit" value="Submit" className="red btn btn-primary" disabled={this.state.disabled}>Submit</button>
                 </div>
+                
               </form>
             </div>
           </div>
